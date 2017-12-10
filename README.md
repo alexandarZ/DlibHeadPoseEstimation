@@ -1,5 +1,5 @@
 # Dlib HeadPoseEstimation
-Head pose estimation and usage in AR applications project written in C++ using QT IDE for my master thesis. 
+Head pose estimation with usage in AR applications. Project written in C++ using QT IDE for my master thesis. 
 
 # Built With
 * Dlib 19.4  
