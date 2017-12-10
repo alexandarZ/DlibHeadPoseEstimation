@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>overlays/beard.png</file>
+        <file>overlays/doggy_ears.png</file>
+        <file>overlays/doggy_nose.png</file>
+        <file>overlays/doggy_tongue.png</file>
+        <file>overlays/glasses.png</file>
+        <file>overlays/hat.png</file>
+        <file>overlays/rainbow.png</file>
+    </qresource>
+</RCC>

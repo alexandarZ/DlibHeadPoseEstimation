@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>629</width>
+    <height>529</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Head pose estimation</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="icons.qrc">
+    <normaloff>:/icons/app.png</normaloff>:/icons/app.png</iconset>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="leftMargin">
+     <number>1</number>
+    </property>
+    <property name="topMargin">
+     <number>1</number>
+    </property>
+    <property name="rightMargin">
+     <number>1</number>
+    </property>
+    <property name="bottomMargin">
+     <number>1</number>
+    </property>
+    <item>
+     <widget class="opengl_view" name="openGLWidget"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>629</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionStart_webcam"/>
+    <addaction name="actionStop_webcam"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuFace">
+    <property name="title">
+     <string>Face</string>
+    </property>
+    <widget class="QMenu" name="menuCustom_mask">
+     <property name="title">
+      <string>Custom mask</string>
+     </property>
+     <addaction name="actionSnapchat_dog"/>
+     <addaction name="actionFancy_hat"/>
+    </widget>
+    <addaction name="actionRender_face_points"/>
+    <addaction name="actionRender_head_angles"/>
+    <addaction name="actionRender_face_vertex_model"/>
+    <addaction name="menuCustom_mask"/>
+    <addaction name="actionSwap_face"/>
+   </widget>
+   <widget class="QMenu" name="menuAbout">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout_application"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuFace"/>
+   <addaction name="menuAbout"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionRender_face_points">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show face points</string>
+   </property>
+  </action>
+  <action name="actionRender_head_angles">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show head angles</string>
+   </property>
+  </action>
+  <action name="actionRender_face_vertex_model">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show face vertex model</string>
+   </property>
+  </action>
+  <action name="actionSwap_face">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Swap face</string>
+   </property>
+  </action>
+  <action name="actionAbout_application">
+   <property name="text">
+    <string>About application</string>
+   </property>
+  </action>
+  <action name="actionStart_webcam">
+   <property name="text">
+    <string>Start webcam</string>
+   </property>
+  </action>
+  <action name="actionStop_webcam">
+   <property name="text">
+    <string>Stop webcam</string>
+   </property>
+  </action>
+  <action name="actionSnapchat_dog">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Snapchat dog</string>
+   </property>
+  </action>
+  <action name="actionFancy_hat">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Fancy man</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>opengl_view</class>
+   <extends>QOpenGLWidget</extends>
+   <header>opengl_view.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
+ <connections/>
+</ui>
