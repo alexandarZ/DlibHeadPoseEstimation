@@ -92,14 +92,10 @@ cv::Mat FaceSwapGenerator::swapFace(cv::Mat dstFaceImage,std::vector<cv::Point> 
         dstFaceHull.push_back(dstFacePoints[hullIndex[i]]);
     }
 
-    qDebug()<<"FaceSwap - ConvexHull done!";
-
     // Find delaunay triangulation of destination face
     std::vector<std::vector<int>> dt;
     cv::Rect rect(0, 0, dstFaceWarped.cols, dstFaceWarped.rows);
-    calculateDelaunayTriangles(rect, srcFaceHull, dt);
-
-    qDebug()<<"FaceSwap - Delaunay done!";
+    calculateDelaunayTriangles(rect, dstFaceHull, dt);
 
     // Apply affine transformation to Delaunay triangles
     for(size_t i = 0; i < dt.size(); i++)
@@ -115,8 +111,6 @@ cv::Mat FaceSwapGenerator::swapFace(cv::Mat dstFaceImage,std::vector<cv::Point> 
         warpAndBlend(dstFaceImage, dstFaceWarped, t1, t2);
     }
 
-    qDebug()<<"FaceSwap - Affine transformation done!";
-
     // Calculate mask
     std::vector<cv::Point> hull8U;
 
@@ -126,10 +120,8 @@ cv::Mat FaceSwapGenerator::swapFace(cv::Mat dstFaceImage,std::vector<cv::Point> 
         hull8U.push_back(pt);
     }
 
-    cv::Mat mask = cv::Mat::zeros(m_face_src_img.rows, m_face_src_img.cols, CV_8UC3);
+    cv::Mat mask = cv::Mat::zeros(m_face_src_img.rows, m_face_src_img.cols, m_face_src_img.depth());
     cv::fillConvexPoly(mask,&hull8U[0], hull8U.size(), cv::Scalar(255,255,255));
-
-    qDebug()<<"FaceSwap - Mask done!";
 
     // Clone face
     cv::Rect r = cv::boundingRect(srcFaceHull);
@@ -138,12 +130,13 @@ cv::Mat FaceSwapGenerator::swapFace(cv::Mat dstFaceImage,std::vector<cv::Point> 
     dstFaceWarped.convertTo(dstFaceWarped, CV_8UC3);
     cv::seamlessClone(dstFaceWarped,m_face_src_img, mask, center, output, cv::NORMAL_CLONE);
 
-    qDebug()<<"FaceSwap - Face clone done!";
-
     //Show images
     //cv::imshow("Src image",m_face_src_img);
     //cv::imshow("Original image",dstFaceImage);
     //cv::imshow("Mask",mask);
+
+    cv::imshow("Face warped",output);
+    cv::waitKey(0);
 
     return output;
 }
@@ -152,16 +145,13 @@ int FaceSwapGenerator::openSrcFaceImage(QString faceSrcImage)
 {
     //Load source face image
     cv::String img_path(faceSrcImage.toStdString());
-    cv::Mat new_face = cv::imread(img_path,CV_LOAD_IMAGE_COLOR);
+    this->m_face_src_img = cv::imread(img_path,CV_LOAD_IMAGE_COLOR);
 
-    if(!new_face.data)
+    if(!m_face_src_img.data)
     {
         qDebug()<<"Error - Could not load source face image!";
         return 1;
     }
-
-    //Update face source image
-    this->m_face_src_img = new_face;
 
     //Get face key points
     int result = readSrcFaceKeypoints();
@@ -170,9 +160,6 @@ int FaceSwapGenerator::openSrcFaceImage(QString faceSrcImage)
     {
         return result;
     }
-
-    //Convert Mat to float data type
-    m_face_src_img.convertTo(m_face_src_img, CV_32F);
 
     qDebug()<<"FaceSwap initialized image successfully!";
 
@@ -272,33 +259,31 @@ void FaceSwapGenerator::warpAndBlend(cv::Mat &img1, cv::Mat &img2, std::vector<c
     cv::Rect r1 = cv::boundingRect(t1);
     cv::Rect r2 = cv::boundingRect(t2);
 
-    // Offset points by left top corner of the respective rectangles
-    std::vector<cv::Point2f> t1Rect, t2Rect;
-    std::vector<cv::Point> t2RectInt;
+     // Offset points by left top corner of the respective rectangles
+     std::vector<cv::Point2f> t1Rect, t2Rect;
+     std::vector<cv::Point> t2RectInt;
 
-    for(int i = 0; i < 3; i++)
-    {
-        t1Rect.push_back( cv::Point2f( t1[i].x - r1.x, t1[i].y -  r1.y) );
-        t2Rect.push_back( cv::Point2f( t2[i].x - r2.x, t2[i].y - r2.y) );
-        t2RectInt.push_back( cv::Point(t2[i].x - r2.x, t2[i].y - r2.y) ); // for fillConvexPoly
-    }
+     for(int i = 0; i < 3; i++)
+     {
+         t1Rect.push_back( cv::Point2f( t1[i].x - r1.x, t1[i].y -  r1.y) );
+         t2Rect.push_back( cv::Point2f( t2[i].x - r2.x, t2[i].y - r2.y) );
+         t2RectInt.push_back( cv::Point(t2[i].x - r2.x, t2[i].y - r2.y) ); // for fillConvexPoly
+     }
 
-    // Get mask by filling triangle
-    cv::Mat mask = cv::Mat::zeros(r2.height, r2.width, CV_32FC3);
-    cv::fillConvexPoly(mask, t2RectInt, cv::Scalar(1.0, 1.0, 1.0), 16, 0);
+     // Get mask by filling triangle
+     cv::Mat mask = cv::Mat::zeros(r2.height, r2.width, CV_32FC3);
+     cv::fillConvexPoly(mask, t2RectInt, cv::Scalar(1.0, 1.0, 1.0), 16, 0);
 
-    // Apply warpImage to small rectangular patches
+     // Apply warpImage to small rectangular patches
+     cv::Mat img1Rect;
+     img1(r1).copyTo(img1Rect);
 
-    cv::Mat img1Rect(img1.size(),img1.type());
+     cv::Mat img2Rect = cv::Mat::zeros(r2.height, r2.width, img1Rect.type());
 
-    img1(r1).copyTo(img1Rect);
+     applyAffineTransform(img2Rect, img1Rect, t1Rect, t2Rect);
 
-    cv::Mat img2Rect = cv::Mat::zeros(r2.height, r2.width, img1Rect.type());
-
-    applyAffineTransform(img2Rect, img1Rect, t1Rect, t2Rect);
-
-    cv::multiply(img2Rect,mask, img2Rect);
-    cv::multiply(img2(r2), cv::Scalar(1.0,1.0,1.0) - mask, img2(r2));
-    img2(r2) = img2(r2) + img2Rect;
+     cv::multiply(img2Rect,mask, img2Rect);
+     cv::multiply(img2(r2), cv::Scalar(1.0,1.0,1.0) - mask, img2(r2));
+     img2(r2) = img2(r2) + img2Rect;
 }
 
