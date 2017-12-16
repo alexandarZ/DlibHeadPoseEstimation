@@ -65,11 +65,18 @@
      <addaction name="actionSnapchat_dog"/>
      <addaction name="actionFancy_hat"/>
     </widget>
+    <widget class="QMenu" name="menuSwap_face">
+     <property name="title">
+      <string>Swap face</string>
+     </property>
+     <addaction name="actionLoad_source_face_image"/>
+     <addaction name="actionStart"/>
+    </widget>
     <addaction name="actionRender_face_points"/>
     <addaction name="actionRender_head_angles"/>
     <addaction name="actionRender_face_vertex_model"/>
     <addaction name="menuCustom_mask"/>
-    <addaction name="actionSwap_face"/>
+    <addaction name="menuSwap_face"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
     <property name="title">
@@ -111,14 +118,6 @@
     <string>Show face vertex model</string>
    </property>
   </action>
-  <action name="actionSwap_face">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Swap face</string>
-   </property>
-  </action>
   <action name="actionAbout_application">
    <property name="text">
     <string>About application</string>
@@ -148,6 +147,19 @@
    </property>
    <property name="text">
     <string>Fancy man</string>
+   </property>
+  </action>
+  <action name="actionLoad_source_face_image">
+   <property name="text">
+    <string>Load source face image</string>
+   </property>
+  </action>
+  <action name="actionStart">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Start / Stop</string>
    </property>
   </action>
  </widget>

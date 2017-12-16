@@ -30,8 +30,11 @@ public:
     void showFancyManOverlay(bool show);
 
     //Face swap
+    void loadNewFace(QString face_img_path);
     void swapFace(bool swap);
 
+    //Status
+    bool isWorking();
 signals:
 
 public slots:
@@ -50,6 +53,7 @@ private:
     FaceFancyMan m_fancyman_filter;
     FaceSwapGenerator m_faceswap_generator;
 
+    bool m_running;
     QTimer m_loop_timer;
 };
 

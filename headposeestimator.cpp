@@ -20,13 +20,15 @@ HeadPoseEstimator::HeadPoseEstimator(opengl_view *renderWidget, QObject *parent)
     m_webcam.setNextItem(&m_face_detector);
     m_face_detector.setNextItem(&m_head_pose_detector);
     m_head_pose_detector.setNextItem(&m_vertex_generator);
-    m_vertex_generator.setNextItem(&m_snapchatdog_filter);
+    m_vertex_generator.setNextItem(&m_faceswap_generator);
+    m_faceswap_generator.setNextItem(&m_snapchatdog_filter);
     m_snapchatdog_filter.setNextItem(&m_fancyman_filter);
-    m_fancyman_filter.setNextItem(&m_faceswap_generator);
-    m_faceswap_generator.setNextItem(&m_renderer);
+    m_fancyman_filter.setNextItem(&m_renderer);
 
     //Connect loop timer with run method
     connect(&m_loop_timer,SIGNAL(timeout()),this,SLOT(run()));
+
+    m_running = false;
 }
 
 HeadPoseEstimator::~HeadPoseEstimator()
@@ -40,11 +42,13 @@ void HeadPoseEstimator::processWebcam(bool process)
     {
         m_webcam.start();
         m_loop_timer.start(1);
+        m_running = true;
     }
     else
     {
         m_webcam.stop();
         m_loop_timer.stop();
+        m_running = false;
     }
 }
 
@@ -73,9 +77,33 @@ void HeadPoseEstimator::showFancyManOverlay(bool show)
     m_fancyman_filter.setEnabled(show);
 }
 
+void HeadPoseEstimator::loadNewFace(QString face_img_path)
+{
+    if(m_faceswap_generator.isEnabled())
+    {
+        // Stop face swap generator
+        m_faceswap_generator.setEnabled(false);
+
+        // Reinitialize face swap generator with new image
+        m_faceswap_generator.initialize(face_img_path);
+
+        // Start again face swap generator
+        m_faceswap_generator.setEnabled(true);
+
+        return;
+    }
+
+    m_faceswap_generator.initialize(face_img_path);
+}
+
 void HeadPoseEstimator::swapFace(bool swap)
 {
     m_faceswap_generator.setEnabled(swap);
+}
+
+bool HeadPoseEstimator::isWorking()
+{
+    return this->m_running;
 }
 
 void HeadPoseEstimator::run()

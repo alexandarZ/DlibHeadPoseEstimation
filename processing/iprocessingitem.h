@@ -22,6 +22,8 @@ public:
        }
     }
 
+    bool isEnabled();
+
 protected:
     bool m_enabled;
 

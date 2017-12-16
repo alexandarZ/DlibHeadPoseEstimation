@@ -20,3 +20,8 @@ void IProcessingItem::setEnabled(bool enabled)
 {
     this->m_enabled = enabled;
 }
+
+bool IProcessingItem::isEnabled()
+{
+    return this->m_enabled;
+}

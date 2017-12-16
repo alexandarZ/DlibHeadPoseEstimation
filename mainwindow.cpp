@@ -57,7 +57,27 @@ void MainWindow::on_actionFancy_hat_triggered(bool show)
     estimator->showFancyManOverlay(show);
 }
 
-void MainWindow::on_actionSwap_face_triggered(bool show)
+void MainWindow::on_actionLoad_source_face_image_triggered()
 {
-    estimator->swapFace(show);
+    bool estimatorStatus = estimator->isWorking();
+
+    if(estimator->isWorking())
+    {
+        estimator->processWebcam(false);
+    }
+
+    QString imgFile = QFileDialog::getOpenFileName(this,("Open image with source face"),
+            QApplication::applicationDirPath(),("PNG image files (*.png)"));
+
+    if(!imgFile.isEmpty())
+    {
+        estimator->loadNewFace(imgFile);
+    }
+
+    estimator->processWebcam(estimatorStatus);
+}
+
+void MainWindow::on_actionStart_toggled(bool show)
+{
+  estimator->swapFace(show);
 }

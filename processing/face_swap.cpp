@@ -74,14 +74,14 @@ void FaceSwapGenerator::process(ProcessingResult result)
 
 cv::Mat FaceSwapGenerator::swapFace(cv::Mat& dstFaceImage, std::vector<cv::Point> dstFacePoints, dlib::rectangle dstFaceRect)
 {
-    cv::Mat srcMask,srcWarppedMask,srcTransMatrix,srcFace,srcWarpedFace,output;
-    dstFaceImage.copyTo(output);
-
-    // Get transformation matrix between points of source and destination face
-    srcTransMatrix = getAffineTransformationMatrix(m_face_src_points,dstFacePoints);
+    cv::Mat srcMask,dstMask,srcWarppedMask,srcTransMatrix,srcFace,srcWarpedFace;
 
     //Create masks from source faces
     srcMask = getFaceMask(m_face_src_img,m_face_src_points);
+    dstMask = getFaceMask(dstFaceImage,dstFacePoints);
+
+    // Get transformation matrix between points of source and destination face
+    srcTransMatrix = getAffineTransformationMatrix(m_face_src_points,dstFacePoints);
 
     // Rotate src image mask to match destination face mask
     cv::warpAffine(srcMask, srcWarppedMask, srcTransMatrix, dstFaceImage.size(), cv::INTER_NEAREST, cv::BORDER_CONSTANT, cv::Scalar(0));
@@ -97,19 +97,17 @@ cv::Mat FaceSwapGenerator::swapFace(cv::Mat& dstFaceImage, std::vector<cv::Point
     srcWarpedFace.copyTo(alignedSrcFace, srcWarppedMask);
 
     // Color correct faces
-    //equalizeFaceColors(m_face_src_img,alignedSrcFace,alignedSrcFace);
+    equalizeFaceColors(dstFaceImage,alignedSrcFace,srcWarppedMask);
 
-    // Blur face a little bit
+    // Blur mask
     cv::Size featherAmount;
-    int featherValue     = (int)cv::norm(m_face_src_points.at(0) - m_face_src_points.at(6)) / 8;
+    int featherValue     = (int)cv::norm(dstFacePoints.at(0) - dstFacePoints.at(6)) / 12;
     featherAmount.width  = featherValue;
     featherAmount.height = featherValue;
-
-    //cv::erode(alignedSrcFace, alignedSrcFace, cv::getStructuringElement(cv::MORPH_RECT, featherAmount), cv::Point(-1, -1), 1, cv::BORDER_CONSTANT, cv::Scalar(0));
-    // cv::blur(alignedSrcFace, alignedSrcFace, featherAmount, cv::Point(-1, -1), cv::BORDER_CONSTANT);
+    cv::erode(srcWarppedMask, srcWarppedMask, cv::getStructuringElement(cv::MORPH_RECT, featherAmount), cv::Point(-1, -1), 1, cv::BORDER_CONSTANT, cv::Scalar(0));
+    cv::blur(srcWarppedMask, srcWarppedMask, featherAmount, cv::Point(-1, -1), cv::BORDER_REFLECT101);
 
     // Draw src. face over dst. face on frame
-
     for (size_t i = 0; i < dstFaceImage.rows; i++)
     {
         auto frame_pixel = dstFaceImage.row(i).data;
@@ -160,19 +158,20 @@ cv::Mat FaceSwapGenerator::getFaceMask(cv::Mat &face, std::vector<cv::Point> fac
     mask.create(face.size(), CV_8UC1);
     mask.setTo(cv::Scalar::all(0));
 
-    cv::Point2i maskPoints[9];
-    maskPoints[0] = facePoints.at(0);
-    maskPoints[1] = facePoints.at(3);
-    maskPoints[2] = facePoints.at(5);
-    maskPoints[3] = facePoints.at(8);
-    maskPoints[4] = facePoints.at(11);
-    maskPoints[5] = facePoints.at(13);
-    maskPoints[6] = facePoints.at(16);
-    cv::Point2i nose_length = facePoints.at(27) - facePoints.at(30);
-    maskPoints[7] = facePoints.at(26) + nose_length;
-    maskPoints[8] = facePoints.at(17) + nose_length;
+    // Find convex hull
+    std::vector<int> hullPtsIndex;
+    cv::convexHull(facePoints, hullPtsIndex, false, false);
 
-    cv::fillConvexPoly(mask, maskPoints,9,cv::Scalar(255));
+    // Create convex polygon based on hull points
+    cv::Point2i maskPoints[68];
+
+    for(int i=0;i<hullPtsIndex.size();i++)
+    {
+        maskPoints[i] = facePoints[hullPtsIndex[i]];
+    }
+
+    // Fill mask polygon
+    cv::fillConvexPoly(mask, maskPoints,hullPtsIndex.size(),cv::Scalar(255));
 
     return mask;
 }
@@ -190,7 +189,7 @@ void FaceSwapGenerator::equalizeFaceColors(const cv::Mat source_image, cv::Mat t
 
     for (size_t i = 0; i < mask.rows; i++)
     {
-        auto current_mask_pixel = mask.row(i).data;
+        auto current_mask_pixel   = mask.row(i).data;
         auto current_source_pixel = source_image.row(i).data;
         auto current_target_pixel = target_image.row(i).data;
 
@@ -263,8 +262,9 @@ void FaceSwapGenerator::equalizeFaceColors(const cv::Mat source_image, cv::Mat t
     // repaint pixels
     for (size_t i = 0; i < mask.rows; i++)
     {
-        auto current_mask_pixel = mask.row(i).data;
+        auto current_mask_pixel   = mask.row(i).data;
         auto current_target_pixel = target_image.row(i).data;
+
         for (size_t j = 0; j < mask.cols; j++)
         {
             if (*current_mask_pixel != 0)

@@ -32,7 +32,9 @@ private slots:
 
     void on_actionFancy_hat_triggered(bool show);
 
-    void on_actionSwap_face_triggered(bool show);
+    void on_actionLoad_source_face_image_triggered();
+
+    void on_actionStart_toggled(bool show);
 
 private:
     Ui::MainWindow *ui;
