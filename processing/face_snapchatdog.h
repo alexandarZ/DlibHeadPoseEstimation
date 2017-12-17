@@ -17,6 +17,7 @@ public:
     cv::Mat processTongue(cv::Mat &frame, dlib::full_object_detection &faceKeypoints);
 
 private:
+    float mouthFilter;
     QString m_imgears_path,m_imgnose_path,m_imgtongue_path;
     cv::Mat m_ears_img,m_nose_img,m_tongue_img;
     float angle;

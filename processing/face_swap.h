@@ -19,12 +19,9 @@ private:
     void equalizeFaceColors(const cv::Mat source_image, cv::Mat target_image, cv::Mat& mask);
 
     int  openSrcFaceImage(QString faceSrcImage);
-    int readSrcFaceKeypoints();
+    int  readSrcFaceKeypoints();
+    void alignSrcFace(cv::Mat& faceImage, std::vector<cv::Point> &facePoints);
 
-    static cv::Rect dlibRectangleToOpenCV(dlib::rectangle r)
-    {
-      return cv::Rect(cv::Point2i(r.left(), r.top()), cv::Point2i(r.right() + 1, r.bottom() + 1));
-    }
 
     QString m_face_src_image_path;
     QString m_face_shape_desc_path;

@@ -49,6 +49,7 @@ int FaceSnapchatDog::initialize()
 
     qDebug()<<"Snapchat dog filter initialized successfully!";
 
+    mouthFilter = 1.0;
     return 0;
 }
 
@@ -149,12 +150,20 @@ cv::Mat FaceSnapchatDog::processTongue(cv::Mat &frame, dlib::full_object_detecti
     cv::Mat tongue_rotated,tongue_resized, result;
 
     /* Check is mouth open */
+    std::vector<cv::Point> mouthContour;
+    for(int i=60;i<68;i++)
+    {
+        mouthContour.push_back(cv::Point(faceKeypoints.part(i).x(),faceKeypoints.part(i).y()));
+    }
 
-    int mouthHeight = (faceKeypoints.part(57).y() - faceKeypoints.part(50).y());
-    int mouthThreshold = (faceKeypoints.part(33).y() - faceKeypoints.part(30).y())+11;
+    int mouth_area = cv::contourArea(mouthContour);
+
+    mouthFilter = (0.5 * (float)mouth_area) + (1.0 - 0.5) * mouthFilter;
+
+    //qDebug()<<"Mouth area: "<<mouth_area<<" Filter: "<<mouthFilter <<" Diff: "<<mouth_area - mouthFilter;
 
     /* If mouth is not open, return */
-    if(mouthThreshold > mouthHeight)
+    if(mouthFilter < 140)
     {
         return frame;
     }

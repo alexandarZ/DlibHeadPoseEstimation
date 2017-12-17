@@ -41,6 +41,7 @@ void FaceDetector::process(ProcessingResult result)
     cv::Mat im_small;
 
     // Resize image for face detection
+    //result.camera_frame.copyTo(im_small);
     cv::resize(result.camera_frame, im_small, cv::Size(), 1.0/m_face_downsample_ratio, 1.0/m_face_downsample_ratio);
 
     // Change to dlib's image format. No memory is copied.

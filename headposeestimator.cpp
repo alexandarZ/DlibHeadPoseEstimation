@@ -11,7 +11,7 @@ HeadPoseEstimator::HeadPoseEstimator(opengl_view *renderWidget, QObject *parent)
     m_fancyman_filter.initialize();
     m_faceswap_generator.initialize(QApplication::applicationDirPath()+"\\overlays\\Obama.png");
 
-    if(m_face_detector.initialize()!=0)
+    if(m_face_detector.initialize(1.6)!=0)
     {
         return;
     }

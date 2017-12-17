@@ -1,5 +1,6 @@
 #include "imageutils.h"
 #define MATH_PI 3.14
+#include <QDebug>
 
 ImageUtils::ImageUtils()
 {
@@ -23,6 +24,7 @@ cv::Mat ImageUtils::rotateImage(cv::Mat &image, double angle)
     // Get rotation matrix
     cv::Point center(image.cols/2.0f,image.rows/2.0f);
     cv::Mat rotMatrix = cv::getRotationMatrix2D(center,angle,1.0);
+
     cv::Rect bbox = cv::RotatedRect(center,image.size(), angle).boundingRect();
 
     // Adjust transformation matrix
@@ -40,12 +42,14 @@ cv::Mat ImageUtils::drawPngImage(cv::Mat &frame, cv::Mat &image, int x0, int y0)
     cv::Mat output;
     frame.copyTo(output);
 
+
     for(int y =y0; y < output.rows; ++y)
     {
+
         int fY = y - y0; // because of the translation
 
         // we are done of we have processed all rows of the foreground image.
-        if(fY >= image.rows)
+        if(fY >= image.rows || fY <0)
             break;
 
         // start at the column indicated by location,
@@ -56,7 +60,7 @@ cv::Mat ImageUtils::drawPngImage(cv::Mat &frame, cv::Mat &image, int x0, int y0)
             int fX = x - x0; // because of the translation.
 
             // we are done with this row if the column is outside of the foreground image.
-            if(fX >= image.cols)
+            if(fX >= image.cols || fX <0)
                 break;
 
             // determine the opacity of the foregrond pixel, using its fourth (alpha) channel.

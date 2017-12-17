@@ -79,7 +79,7 @@ cv::Mat FaceSwapGenerator::swapFace(cv::Mat& dstFaceImage, std::vector<cv::Point
     // Get transformation matrix between points of source and destination face
     srcTransMatrix = getAffineTransformationMatrix(m_face_src_points,dstFacePoints);
 
-    // Rotate src image mask to match destination face mask
+    // Warp src image mask to match destination face mask
     cv::warpAffine(srcMask, srcWarppedMask, srcTransMatrix, dstFaceImage.size(), cv::INTER_NEAREST, cv::BORDER_CONSTANT, cv::Scalar(0));
 
     // Extract face from source image
@@ -134,11 +134,11 @@ cv::Mat FaceSwapGenerator::getAffineTransformationMatrix(std::vector<cv::Point> 
     cv::Point2f affineTransKeyptsSrc[3],affineTransKeyptsDst[3];
 
     //Get affine transformation keypoints
-    affineTransKeyptsSrc[0] = srcFacePoints.at(3);
+    affineTransKeyptsSrc[0] = srcFacePoints.at(8);
     affineTransKeyptsSrc[1] = srcFacePoints.at(36);
     affineTransKeyptsSrc[2] = srcFacePoints.at(45);
 
-    affineTransKeyptsDst[0] = dstFacePoints.at(3);
+    affineTransKeyptsDst[0] = dstFacePoints.at(8);
     affineTransKeyptsDst[1] = dstFacePoints.at(36);
     affineTransKeyptsDst[2] = dstFacePoints.at(45);
 
@@ -297,6 +297,17 @@ int FaceSwapGenerator::openSrcFaceImage(QString faceSrcImage)
         return result;
     }
 
+//    // Align face
+//    alignSrcFace(m_face_src_img,m_face_src_points);
+
+//    // Read src points again
+//    result = readSrcFaceKeypoints();
+
+//    if(result > 0)
+//    {
+//        return result;
+//    }
+
     qDebug()<<"FaceSwap initialized image successfully!";
 
     //Return result
@@ -347,4 +358,13 @@ int FaceSwapGenerator::readSrcFaceKeypoints()
 
     qDebug()<<"FaceSwap successfully initialized srcImage points";
     return 0;
+}
+
+void FaceSwapGenerator::alignSrcFace(cv::Mat &faceImage,std::vector<cv::Point>& facePoints)
+{
+    /* Calculate rotation angle */
+    double rotAngle = ImageUtils::calculateAngle(facePoints.at(31),facePoints.at(35));
+
+    /* Rotate image */
+    faceImage = ImageUtils::rotateImage(faceImage,-rotAngle);
 }
