@@ -67,7 +67,7 @@ void MainWindow::on_actionLoad_source_face_image_triggered()
     }
 
     QString imgFile = QFileDialog::getOpenFileName(this,("Open image with source face"),
-            QApplication::applicationDirPath(),("PNG image files (*.png)"));
+            QApplication::applicationDirPath(),("Image files (*.png *.jpg)"));
 
     if(!imgFile.isEmpty())
     {

@@ -45,8 +45,6 @@ void FaceSwapGenerator::process(ProcessingResult result)
         // Process faces
         try
         {
-            qDebug()<<"Getting face points";
-
             for(int i=0;i<result.face_rectangles.size();i++)
             {
                 dstFacePoints.clear();
@@ -56,8 +54,6 @@ void FaceSwapGenerator::process(ProcessingResult result)
                 {
                     dstFacePoints.push_back(cv::Point(result.face_shapes[i].part(j).x(), result.face_shapes[i].part(j).y()));
                 }
-
-                qDebug()<<"Swapping face";
 
                 //Swap face
                 result.camera_frame = swapFace(result.camera_frame,dstFacePoints,result.face_rectangles[i]);
