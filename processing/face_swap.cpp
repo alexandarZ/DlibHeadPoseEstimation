@@ -297,10 +297,10 @@ int FaceSwapGenerator::openSrcFaceImage(QString faceSrcImage)
         return result;
     }
 
-//    // Align face
+    // Align face
 //    alignSrcFace(m_face_src_img,m_face_src_points);
 
-//    // Read src points again
+    // Read src points again
 //    result = readSrcFaceKeypoints();
 
 //    if(result > 0)

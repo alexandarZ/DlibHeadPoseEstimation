@@ -72,6 +72,7 @@
      <addaction name="actionLoad_source_face_image"/>
      <addaction name="actionStart"/>
     </widget>
+    <addaction name="actionShow_face_rectangle"/>
     <addaction name="actionRender_face_points"/>
     <addaction name="actionRender_head_angles"/>
     <addaction name="actionRender_face_vertex_model"/>
@@ -160,6 +161,14 @@
    </property>
    <property name="text">
     <string>Start / Stop</string>
+   </property>
+  </action>
+  <action name="actionShow_face_rectangle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show face rectangle</string>
    </property>
   </action>
  </widget>

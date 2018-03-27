@@ -103,9 +103,9 @@ void HeadPoseDetector::process(ProcessingResult result)
             //Draw nose line
             //cv::line(result.camera_frame,image_points[0], nose_end_point2D[0], cv::Scalar(255,0,0), 2);
 
-            cv::putText(result.camera_frame,pitch,cv::Point(face.part(7).x(),face.part(7).y()+30),cv::FONT_HERSHEY_PLAIN,1.0,cv::Scalar(255,0,0));
-            cv::putText(result.camera_frame,yaw,cv::Point(face.part(7).x(),face.part(7).y()+45),cv::FONT_HERSHEY_PLAIN,1.0,cv::Scalar(255,0,0));
-            cv::putText(result.camera_frame,roll,cv::Point(face.part(7).x(),face.part(7).y()+60),cv::FONT_HERSHEY_PLAIN,1.0,cv::Scalar(255,0,0));
+            cv::putText(result.camera_frame,pitch,cv::Point(face.part(7).x(),face.part(7).y()+30),cv::FONT_HERSHEY_PLAIN,1.0,cv::Scalar(255,255,255));
+            cv::putText(result.camera_frame,yaw,cv::Point(face.part(7).x(),face.part(7).y()+45),cv::FONT_HERSHEY_PLAIN,1.0,cv::Scalar(255,255,255));
+            cv::putText(result.camera_frame,roll,cv::Point(face.part(7).x(),face.part(7).y()+60),cv::FONT_HERSHEY_PLAIN,1.0,cv::Scalar(255,255,255));
         }
     }
 

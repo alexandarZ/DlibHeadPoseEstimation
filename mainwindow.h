@@ -36,6 +36,8 @@ private slots:
 
     void on_actionStart_toggled(bool show);
 
+    void on_actionShow_face_rectangle_toggled(bool show);
+
 private:
     Ui::MainWindow *ui;
     HeadPoseEstimator* estimator;

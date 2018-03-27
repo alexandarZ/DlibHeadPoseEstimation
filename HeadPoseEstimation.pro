@@ -38,7 +38,8 @@ SOURCES += \
     processing/face_snapchatdog.cpp \
     processing/face_fancyman.cpp \
     processing/face_swap.cpp \
-    processing/face_vertex.cpp
+    processing/face_vertex.cpp \
+    processing/face_rectangles.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -54,7 +55,8 @@ HEADERS += \
     processing/face_snapchatdog.h \
     processing/face_fancyman.h \
     processing/face_swap.h \
-    processing/face_vertex.h
+    processing/face_vertex.h \
+    processing/face_rectangles.h
 
 FORMS += \
         mainwindow.ui

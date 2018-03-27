@@ -9,16 +9,18 @@ HeadPoseEstimator::HeadPoseEstimator(opengl_view *renderWidget, QObject *parent)
     m_vertex_generator.initialize();
     m_snapchatdog_filter.initialize();
     m_fancyman_filter.initialize();
+    m_face_rectangles.initialize();
     m_faceswap_generator.initialize(QApplication::applicationDirPath()+"\\overlays\\Obama.png");
 
-    if(m_face_detector.initialize(1.6)!=0)
+    if(m_face_detector.initialize(2.0)!=0)
     {
         return;
     }
 
     // Form processing chain
     m_webcam.setNextItem(&m_face_detector);
-    m_face_detector.setNextItem(&m_head_pose_detector);
+    m_face_detector.setNextItem(&m_face_rectangles);
+    m_face_rectangles.setNextItem(&m_head_pose_detector);
     m_head_pose_detector.setNextItem(&m_vertex_generator);
     m_vertex_generator.setNextItem(&m_faceswap_generator);
     m_faceswap_generator.setNextItem(&m_snapchatdog_filter);
@@ -65,6 +67,11 @@ void HeadPoseEstimator::showHeadAngles(bool show)
 void HeadPoseEstimator::showVertexModel(bool show)
 {
     m_vertex_generator.setEnabled(show);
+}
+
+void HeadPoseEstimator::showFaceRectangles(bool show)
+{
+    m_face_rectangles.setEnabled(show);
 }
 
 void HeadPoseEstimator::showSnapchatDogOverlay(bool show)

@@ -81,3 +81,8 @@ void MainWindow::on_actionStart_toggled(bool show)
 {
   estimator->swapFace(show);
 }
+
+void MainWindow::on_actionShow_face_rectangle_toggled(bool show)
+{
+    estimator->showFaceRectangles(show);
+}

@@ -12,6 +12,7 @@
 #include "processing/face_snapchatdog.h"
 #include "processing/face_fancyman.h"
 #include "processing/face_swap.h"
+#include "processing/face_rectangles.h"
 
 class HeadPoseEstimator : public QObject
 {
@@ -24,6 +25,7 @@ public:
     void showFacePoints(bool show);
     void showHeadAngles(bool show);
     void showVertexModel(bool show);
+    void showFaceRectangles(bool show);
 
     //Overlays
     void showSnapchatDogOverlay(bool show);
@@ -52,6 +54,7 @@ private:
     FaceSnapchatDog m_snapchatdog_filter;
     FaceFancyMan m_fancyman_filter;
     FaceSwapGenerator m_faceswap_generator;
+    FaceRectangles m_face_rectangles;
 
     bool m_running;
     QTimer m_loop_timer;
